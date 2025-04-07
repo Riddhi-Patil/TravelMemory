@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 const TravelCard = () => {
@@ -13,6 +13,13 @@ const TravelCard = () => {
     person: "3",
     rating: "4.8",
     note: "Escape to the ultimate tropical paradise retreat with pristine beaches, lush greenery, and luxurious accommodations.",
+    memoryImages: [
+      require('./assets/travel.jpg'),
+      require('./assets/travel1.jpg'),
+      require('./assets/travel2.jpg'),
+      require('./assets/travel3.jpg'),
+      require('./assets/travel4.jpg'),
+    ]
   };
   
   const toggleLike = () => {
@@ -25,15 +32,37 @@ const TravelCard = () => {
     Alert.alert("Memory Shared", "Check the console log for travel details!");
   };
 
+  const renderImageItem = ({ item }) => (
+    <Image
+      source={item}
+      style={styles.memoryImage}
+      resizeMode="cover"
+    />
+  );
+
   return (
     <LinearGradient colors={['#fdf6e3', '#d1884f']} style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.header}>Riddhi Bhaskar Patil</Text>
+        
         <Image
-          source={require('./assets/travel.jpg')}
-          style={styles.image}
+          source={travelData.memoryImages[0]}
+          style={styles.mainImage}
           resizeMode="cover"
         />
+        
+        <View style={styles.memoryContainer}>
+          <Text style={styles.memoryTitle}>Memory Photos</Text>
+          <FlatList
+            data={travelData.memoryImages}
+            renderItem={renderImageItem}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.memoryList}
+          />
+        </View>
+
         <Text style={styles.title}>{travelData.name}</Text>
         <Text style={styles.date}>{travelData.date}</Text>
         <Text style={styles.note}>{travelData.note}</Text>
@@ -46,25 +75,25 @@ const TravelCard = () => {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity onPress={toggleLike}>
+          <TouchableOpacity style={styles.button} onPress={toggleLike}>
             <Image
-            source={liked
-              ? require('./assets/icons/heart_filled.png')
-              : require('./assets/icons/heart_outlined.jpg')}
+              source={liked
+                ? require('./assets/icons/heart_filled.png')
+                : require('./assets/icons/heart_outlined.jpg')}
               style={{ width: 26, height: 26 }}
               resizeMode="contain"
             />
             <Text>Like</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity onPress={shareMemory}>
-              <Image
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.button} onPress={shareMemory}>
+            <Image
               source={require('./assets/icons/share.png')}
               style={{ width: 26, height: 26 }}
               resizeMode="contain"
-              />
-              <Text>Share</Text>
-              </TouchableOpacity>
+            />
+            <Text>Share</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </LinearGradient>
@@ -97,9 +126,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 10,
   },
-  image: {
+  mainImage: {
     width: '100%',
     height: 180,
+  },
+  memoryContainer: {
+    marginTop: 10,
+    marginHorizontal: 15,
+  },
+  memoryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  memoryList: {
+    paddingRight: 15,
+  },
+  memoryImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 10,
   },
   title: {
     fontSize: 18,
